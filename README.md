@@ -6,8 +6,8 @@ O app não tem anúncios, analytics ou conta. Os comandos passam pela rede da ca
 
 ## Escolha como usar
 
-- **Android:** o app está em [ControleQ80A](ControleQ80A/). É a opção mais direta: informe o IP da TV e autorize o controle na televisão.
-- **iPhone pelo Windows:** a pasta [iphone-tv-control](iphone-tv-control/) contém uma página que abre no Safari. O Windows faz a ponte com a TV e precisa ficar ligado durante o uso. Essa alternativa foi testada em um iPhone: Início, volume e Spotify funcionaram.
+- **Android:** o app está em [ControleQ80A](ControleQ80A/). A versão atual é a **0.1.3**. Informe o IP da TV e autorize o controle na televisão.
+- **iPhone pelo Windows:** a pasta [iphone-tv-control](iphone-tv-control/) contém uma página que abre no Safari. O Windows faz a ponte com a TV e precisa ficar ligado durante o uso. Início, volume, Spotify e o comando para ligar a TV pela rede foram testados em um iPhone.
 - **App nativo para iPhone:** há um projeto SwiftUI em [ControleQ80AiOS](ControleQ80AiOS/). Ele ainda não foi compilado nem testado em um iPhone. Para instalar essa versão, é preciso um Mac com Xcode e assinatura Apple. Os [requisitos do Xcode](https://developer.apple.com/xcode/system-requirements/) são mantidos pela Apple.
 
 ## Android
@@ -64,7 +64,9 @@ pwsh -NoProfile -File .\iphone-tv-control\instalar-inicializacao.ps1
 
 O instalador pede os endereços da rede e cria um atalho na pasta de inicialização da conta atual. Para consultar o PIN temporário gerado pelo serviço, abra `iphone-tv-control/mostrar-pin.cmd` no Windows; se o PIN anterior tiver expirado ou já tiver sido usado, o programa pede outro ao serviço. A sessão HTTPS fica salva e é renovada ao usar o controle. O computador precisa estar ligado, com a sessão Windows iniciada e sem suspensão. Reserve o IP do Windows no roteador para que o endereço salvo no iPhone continue apontando para ele.
 
-Na página, **Ligar TV pela rede** envia Wake-on-LAN. Na primeira vez, abra a configuração desse botão e informe o MAC da TV e o broadcast da rede. Na QN55Q80AAGXZD usada no projeto, a TV ligou após aproximadamente 30 segundos em espera, com **Ligar com celular** ativado. A confirmação de envio indica apenas que o pacote saiu do Windows; o resultado pode variar conforme o tempo em espera e a rede.
+Na página, **Ligar TV pela rede** envia Wake-on-LAN. Na primeira vez, abra a configuração desse botão e informe o MAC da TV e o broadcast da rede. Na QN55Q80AAGXZD usada no projeto, a TV ligou após aproximadamente 30 segundos em espera, com **Ligar com celular** ativado; os outros botões do controle voltaram a funcionar em seguida. A confirmação de envio indica apenas que o pacote saiu do Windows; o resultado pode variar conforme o tempo em espera e a rede.
+
+Também testamos o reinício do servidor: ele voltou sozinho e o iPhone abriu o controle sem pedir o PIN novamente. A estabilidade após várias horas de inatividade ainda precisa de acompanhamento, assim como o Wake-on-LAN depois de um período longo com a TV desligada.
 
 O HTTPS usa um certificado local autoassinado. Confira a impressão digital exibida no terminal antes de confiar nele. No Safari usado durante os testes, essa conexão apresentou instabilidade. A alternativa testada foi `iphone-tv-control/iniciar-teste-iphone.cmd`, que inicia uma sessão HTTP temporária.
 
@@ -80,7 +82,7 @@ Os dados da sua rede não vêm preenchidos. O iniciador pede os valores abaixo:
 | IPv4 do Windows | Nas informações da conexão Wi-Fi do Windows. É o endereço do computador que vai servir a página para o iPhone. |
 | Sub-rede permitida | A faixa da rede local em formato CIDR. Ela deve incluir o Windows e o iPhone; o servidor recusa conexões de fora dela. |
 | Porta | O iniciador usa a porta 8765. Quem iniciar `server.py` diretamente pode alterá-la com `--port`. |
-| PIN | Aparece no terminal quando o servidor inicia. É temporário e deve ser digitado no Safari. |
+| PIN | É temporário e deve ser digitado no Safari. Aparece no terminal ou pode ser consultado com `mostrar-pin.cmd` quando o serviço está em segundo plano. |
 | IDs dos aplicativos | Podem ser alterados nas configurações do controle. A consulta à lista instalada depende da resposta da TV. |
 
 O token Samsung é fornecido pela TV durante o pareamento, não precisa ser digitado no navegador e não deve ser compartilhado. Arquivos de pareamento, sessão, certificados e chaves ficam em pastas `.local`, ignoradas pelo Git.
