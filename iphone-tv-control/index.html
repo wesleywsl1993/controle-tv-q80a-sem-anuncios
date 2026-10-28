@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Controle Q80A">
+  <meta name="theme-color" content="#080c14">
+  <title>Controle Q80A</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topline">
+      <div><div class="eyebrow">SAMSUNG Q80A · CONTROLE LOCAL</div><h1>Controle da TV</h1></div>
+      <div id="status" class="status" role="status" aria-live="polite">Verificando…</div>
+    </header>
+    <section id="login" class="login" hidden>
+      <h2>Conectar este iPhone</h2>
+      <p>Digite o PIN exibido no terminal do Windows. O token da TV permanece no computador.</p>
+      <form id="pair-form">
+        <label for="pin">PIN de pareamento</label>
+        <input id="pin" name="pin" inputmode="numeric" pattern="[0-9]{8}" minlength="8" maxlength="8" autocomplete="one-time-code" required>
+        <button class="primary" type="submit">Conectar</button>
+      </form>
+      <p id="pair-message" class="feedback" role="alert"></p>
+    </section>
+    <div id="remote" hidden>
+      <section class="appstrip" aria-label="Aplicativos">
+        <button type="button" data-app="spotify">Spotify</button>
+        <button type="button" data-app="youtube">YouTube</button>
+        <button type="button" data-app="netflix">Netflix</button>
+      </section>
+      <section class="remote-grid" aria-label="Navegação">
+        <button class="secondary" type="button" data-key="KEY_POWER">Ligar / desligar</button>
+        <button class="secondary" type="button" data-key="KEY_HOME">Início</button>
+        <button class="secondary" type="button" data-key="KEY_MENU">Menu</button>
+        <div class="dpad" role="group" aria-label="Setas e OK">
+          <button class="up" type="button" data-key="KEY_UP" aria-label="Cima"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 15 7-7 7 7"/></svg></button>
+          <button class="left" type="button" data-key="KEY_LEFT" aria-label="Esquerda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+          <button class="ok" type="button" data-key="KEY_ENTER">OK</button>
+          <button class="right" type="button" data-key="KEY_RIGHT" aria-label="Direita"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+          <button class="down" type="button" data-key="KEY_DOWN" aria-label="Baixo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg></button>
+        </div>
+        <button class="secondary" type="button" data-key="KEY_RETURN">Voltar</button>
+        <button class="secondary" type="button" data-key="KEY_MUTE">Mudo</button>
+      </section>
+      <section class="controls" aria-label="Volume e canal">
+        <div class="section-title"><h2>Volume</h2><span>ajuste relativo</span></div>
+        <div class="volume-row">
+          <button type="button" data-key="KEY_VOLDOWN" aria-label="Diminuir volume">−</button>
+          <input id="volume" type="range" min="0" max="20" value="10" aria-label="Volume relativo; centro é neutro">
+          <button type="button" data-key="KEY_VOLUP" aria-label="Aumentar volume">+</button>
+        </div>
+        <p class="hint">Arraste para aumentar ou diminuir. O centro não indica o volume atual.</p>
+        <div class="twocol">
+          <button type="button" data-key="KEY_CHDOWN">Canal −</button>
+          <button type="button" data-key="KEY_CHUP">Canal +</button>
+        </div>
+      </section>
+      <section class="controls" aria-label="Mídia">
+        <div class="section-title"><h2>Mídia</h2></div>
+        <div class="media">
+          <button type="button" data-key="KEY_REWIND">Voltar mídia</button>
+          <button type="button" data-key="KEY_PLAY">Reproduzir</button>
+          <button type="button" data-key="KEY_PAUSE">Pausar</button>
+          <button type="button" data-key="KEY_FF">Avançar</button>
+          <button type="button" data-key="KEY_STOP">Parar</button>
+        </div>
+      </section>
+      <section class="controls" aria-label="Teclado">
+        <div class="section-title"><h2>Texto</h2><span>até 200 caracteres</span></div>
+        <form id="text-form">
+          <label for="tv-text">Digite no iPhone para enviar à TV</label>
+          <div class="text-row"><input id="tv-text" maxlength="200" autocomplete="off" spellcheck="false"><button type="submit">Enviar</button></div>
+        </form>
+        <p class="hint">Selecione antes um campo de texto na TV. O firmware pode não aceitar texto em todos os apps.</p>
+      </section>
+      <details class="settings">
+        <summary>IDs dos aplicativos</summary>
+        <p>IDs informados para esta TV. Edite se um atalho deixar de funcionar.</p>
+        <form id="apps-form">
+          <label for="spotify">Spotify</label><input id="spotify" name="spotify" maxlength="80" required>
+          <label for="youtube">YouTube</label><input id="youtube" name="youtube" maxlength="80" required>
+          <label for="netflix">Netflix</label><input id="netflix" name="netflix" maxlength="80" required>
+          <button type="submit">Salvar IDs</button>
+        </form>
+      </details>
+      <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+    </div>
+    <footer>Conexão pela rede local · Windows e TV precisam estar ligados</footer>
+  </main>
+</body>
+</html>

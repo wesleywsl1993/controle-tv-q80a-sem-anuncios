@@ -1,0 +1,37 @@
+# Pareamento, sessões, certificados e configurações de cada usuário
+**/.local/
+**/config.local.*
+**/.env
+**/.env.*
+**/*.keystore
+**/*.jks
+**/*.p12
+**/*.pfx
+**/*.pem
+**/server.key
+**/server.crt
+**/token.dpapi
+**/session.bin
+**/tv-ip.txt
+**/certificate.sha256
+
+# Saídas de build e arquivos da máquina
+**/build/
+**/.gradle/
+**/.gradle-user/
+**/.gradle-home/
+**/.tools/
+**/.android*/
+**/.avd/
+**/.emulator/
+**/.kotlin/
+**/.build*/
+**/.idea/
+**/xcuserdata/
+**/DerivedData/
+**/__pycache__/
+**/*.pyc
+*.apk
+*.ipa
+*.zip
+*.log

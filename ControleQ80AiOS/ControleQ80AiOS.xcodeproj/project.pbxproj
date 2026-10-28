@@ -1,0 +1,220 @@
+// !$*UTF8*$!
+{
+    archiveVersion = 1;
+    classes = {};
+    objectVersion = 56;
+    objects = {
+
+/* Begin PBXBuildFile section */
+        000000000000000000000020 = {isa = PBXBuildFile; fileRef = 000000000000000000000010; };
+        000000000000000000000021 = {isa = PBXBuildFile; fileRef = 000000000000000000000011; };
+        000000000000000000000022 = {isa = PBXBuildFile; fileRef = 000000000000000000000012; };
+        000000000000000000000023 = {isa = PBXBuildFile; fileRef = 000000000000000000000013; };
+        000000000000000000000024 = {isa = PBXBuildFile; fileRef = 000000000000000000000014; };
+        000000000000000000000025 = {isa = PBXBuildFile; fileRef = 000000000000000000000015; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+        000000000000000000000009 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ControleQ80AiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+        000000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVProtocol.swift; sourceTree = "<group>"; };
+        000000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStore.swift; sourceTree = "<group>"; };
+        000000000000000000000012 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVSessionDelegate.swift; sourceTree = "<group>"; };
+        000000000000000000000013 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVRemoteModel.swift; sourceTree = "<group>"; };
+        000000000000000000000014 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+        000000000000000000000015 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControleQ80AiOSApp.swift; sourceTree = "<group>"; };
+        000000000000000000000016 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+        000000000000000000000007 = {
+            isa = PBXFrameworksBuildPhase;
+            buildActionMask = 2147483647;
+            files = ();
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+        000000000000000000000003 = {
+            isa = PBXGroup;
+            children = (
+                000000000000000000000004,
+                000000000000000000000005,
+            );
+            sourceTree = "<group>";
+        };
+        000000000000000000000004 = {
+            isa = PBXGroup;
+            children = (
+                000000000000000000000015,
+                000000000000000000000014,
+                000000000000000000000013,
+                000000000000000000000012,
+                000000000000000000000011,
+                000000000000000000000010,
+                000000000000000000000016,
+            );
+            path = ControleQ80AiOS;
+            sourceTree = "<group>";
+        };
+        000000000000000000000005 = {
+            isa = PBXGroup;
+            children = (000000000000000000000009,);
+            name = Products;
+            sourceTree = "<group>";
+        };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+        000000000000000000000002 = {
+            isa = PBXNativeTarget;
+            buildConfigurationList = 000000000000000000000041;
+            buildPhases = (
+                000000000000000000000006,
+                000000000000000000000007,
+                000000000000000000000008,
+            );
+            buildRules = ();
+            dependencies = ();
+            name = ControleQ80AiOS;
+            productName = ControleQ80AiOS;
+            productReference = 000000000000000000000009;
+            productType = "com.apple.product-type.application";
+        };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+        000000000000000000000001 = {
+            isa = PBXProject;
+            attributes = {
+                BuildIndependentTargetsInParallel = 1;
+                LastUpgradeCheck = 1600;
+                TargetAttributes = {
+                    000000000000000000000002 = {
+                        CreatedOnToolsVersion = 16.0;
+                        ProvisioningStyle = Automatic;
+                    };
+                };
+            };
+            buildConfigurationList = 000000000000000000000040;
+            compatibilityVersion = "Xcode 14.0";
+            developmentRegion = pt_BR;
+            hasScannedForEncodings = 0;
+            knownRegions = (pt_BR, en, Base,);
+            mainGroup = 000000000000000000000003;
+            productRefGroup = 000000000000000000000005;
+            projectDirPath = "";
+            projectRoot = "";
+            targets = (000000000000000000000002,);
+        };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+        000000000000000000000008 = {
+            isa = PBXResourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = ();
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+        000000000000000000000006 = {
+            isa = PBXSourcesBuildPhase;
+            buildActionMask = 2147483647;
+            files = (
+                000000000000000000000020,
+                000000000000000000000021,
+                000000000000000000000022,
+                000000000000000000000023,
+                000000000000000000000024,
+                000000000000000000000025,
+            );
+            runOnlyForDeploymentPostprocessing = 0;
+        };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+        000000000000000000000030 = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ALWAYS_SEARCH_USER_PATHS = NO;
+                CLANG_ENABLE_MODULES = YES;
+                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+                SDKROOT = iphoneos;
+                SWIFT_VERSION = 5.0;
+            };
+            name = Debug;
+        };
+        000000000000000000000031 = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                ALWAYS_SEARCH_USER_PATHS = NO;
+                CLANG_ENABLE_MODULES = YES;
+                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+                SDKROOT = iphoneos;
+                SWIFT_VERSION = 5.0;
+            };
+            name = Release;
+        };
+        000000000000000000000032 = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                GENERATE_INFOPLIST_FILE = NO;
+                INFOPLIST_FILE = ControleQ80AiOS/Info.plist;
+                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+                MARKETING_VERSION = 0.1.0;
+                PRODUCT_BUNDLE_IDENTIFIER = br.com.wesley.controleq80a.ios;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                SWIFT_EMIT_LOC_STRINGS = YES;
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = 1;
+            };
+            name = Debug;
+        };
+        000000000000000000000033 = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                CODE_SIGN_STYLE = Automatic;
+                CURRENT_PROJECT_VERSION = 1;
+                GENERATE_INFOPLIST_FILE = NO;
+                INFOPLIST_FILE = ControleQ80AiOS/Info.plist;
+                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+                MARKETING_VERSION = 0.1.0;
+                PRODUCT_BUNDLE_IDENTIFIER = br.com.wesley.controleq80a.ios;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+                SWIFT_EMIT_LOC_STRINGS = YES;
+                SWIFT_VERSION = 5.0;
+                TARGETED_DEVICE_FAMILY = 1;
+            };
+            name = Release;
+        };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+        000000000000000000000040 = {
+            isa = XCConfigurationList;
+            buildConfigurations = (
+                000000000000000000000030,
+                000000000000000000000031,
+            );
+            defaultConfigurationIsVisible = 0;
+            defaultConfigurationName = Release;
+        };
+        000000000000000000000041 = {
+            isa = XCConfigurationList;
+            buildConfigurations = (
+                000000000000000000000032,
+                000000000000000000000033,
+            );
+            defaultConfigurationIsVisible = 0;
+            defaultConfigurationName = Release;
+        };
+/* End XCConfigurationList section */
+    };
+    rootObject = 000000000000000000000001;
+}
