@@ -1,64 +1,90 @@
 # Controle TV Q80A sem anúncios
 
-Controle local para uma Samsung QN55Q80AAGXZD (Tizen), feito como projeto pessoal. Não há anúncios, analytics, conta, backend em nuvem ou serviço pago. O telefone, a TV e, na alternativa web, o Windows precisam estar na mesma rede local.
+Um controle para TV Samsung pela rede local. O projeto nasceu para uma QN55Q80AAGXZD, mas pode servir como ponto de partida para outras TVs Samsung com Tizen. Ele oferece setas, OK, voltar, início, volume, canais, mídia, teclado e atalhos para Spotify, YouTube e Netflix.
 
-## O que há neste repositório
+O app não tem anúncios, analytics ou conta. Os comandos passam pela rede da casa; não há backend em nuvem. O celular e a TV precisam estar no mesmo Wi-Fi.
 
-| Pasta | Função | Estado de validação |
-| --- | --- | --- |
-| `ControleQ80A/` | App Android em Kotlin e Jetpack Compose | APK debug `0.1.2` compilado; cinco testes unitários passaram. O usuário confirmou controles básicos e atalho Spotify na TV. A reconexão após longo tempo ocioso ainda precisa de teste físico. |
-| `ControleQ80AiOS/` | Código fonte SwiftUI para um app nativo | Criado no Windows. Ainda não foi compilado no Xcode nem instalado em um iPhone. |
-| `iphone-tv-control/` | Controle web aberto no Safari, servido por um Windows da rede | Testado pelo usuário no iPhone com a modalidade HTTP local: PIN, Início, volume e Spotify funcionaram. O modo HTTPS autoassinado não se mostrou estável no Safari testado. |
-| `tv-lan-probe/` | Pareamento e ponte Windows→TV por WSS | O comando Início e a abertura do Spotify foram confirmados na TV do usuário. |
-| `iphone-lan-probe/` | Diagnóstico inicial da comunicação iPhone→Windows | Não envia comandos à TV. |
+## Escolha como usar
 
-## Limitação do Mac e alternativa para iPhone
-
-Um app iOS nativo precisa ser compilado e assinado em um **Mac com Xcode** e uma equipe de assinatura Apple ([requisitos do Xcode](https://developer.apple.com/xcode/system-requirements/)). Este projeto foi desenvolvido em Windows, sem acesso a Mac. Por isso, o código SwiftUI está disponível para quem tiver esse ambiente, mas **não há IPA nativo pronto** e não se afirma que essa versão tenha sido testada no iPhone.
-
-A alternativa que funcionou foi uma página local aberta no Safari do iPhone. Um servidor Python no Windows recebe os comandos da página; uma ponte PowerShell no mesmo Windows conversa com a TV pela rede local. O Windows deve permanecer ligado e acessível. O atalho **Adicionar à Tela de Início** abre a página como controle, mas não a torna offline. O token Samsung fica no Windows e nunca é entregue ao navegador.
-
-## Campos que cada usuário deve preencher
-
-Nenhum endereço da rede doméstica do autor, PIN, token, impressão digital de certificado ou credencial pessoal vem preenchido no código publicado. Os endereços que aparecem nos testes são apenas dados de teste.
-
-| Campo | Onde informar | O que significa |
-| --- | --- | --- |
-| IP da TV | Configurações do Android ou do app SwiftUI; `tv-lan-probe` e servidor web no Windows | Endereço IPv4 privado atual da TV na rede local. Se ele mudar, atualize o valor e refaça o pareamento quando necessário. |
-| IPv4 deste Windows | Ao iniciar `iphone-tv-control/start.ps1` | Endereço IPv4 da interface do Windows conectada à mesma rede da TV e do iPhone. O servidor escuta somente nesse endereço. |
-| Sub-rede permitida | Ao iniciar `iphone-tv-control/start.ps1` | Faixa da rede local em notação CIDR que contém o Windows e o iPhone. O servidor recusa clientes fora dessa faixa. |
-| Porta do servidor web | Parâmetro `--port` de `server.py` | Porta local pela qual o iPhone acessa o Windows. O iniciador usa 8765; não abra essa porta no roteador. |
-| IDs dos aplicativos | Configurações do controle | Identificadores de Spotify, YouTube e Netflix instalados na própria TV. São editáveis; a descoberta de apps pode não ser respondida pelo firmware. |
-| Token Samsung | Gerado pela TV após autorização | Credencial de pareamento. O Android a guarda nas preferências privadas; o app iOS usa Keychain; a ponte Windows usa DPAPI em `tv-lan-probe/.local/`. Não copie para o repositório. |
-| PIN do iPhone | Exibido no terminal ao iniciar o servidor web | Código temporário para autorizar o navegador. É gerado em cada início e digitado na página. Nenhum PIN fixo é distribuído. |
-| Certificado e impressão digital | Criados e guardados localmente no Windows | Identificam o servidor HTTPS e o certificado autoassinado da TV. Confira a impressão digital antes de confiar no servidor; não publique chaves privadas. |
-| Equipe de assinatura Apple | Xcode, em Signing & Capabilities | Conta/equipe usada para assinar e instalar o app SwiftUI em um iPhone. Só é necessária para a versão nativa. |
-| Identificador do app iOS | Xcode, nas configurações do alvo | Nome exclusivo do pacote na sua equipe Apple. Ajuste se o identificador incluído no projeto já estiver ocupado. |
+- **Android:** o app está em [ControleQ80A](ControleQ80A/). É a opção mais direta: informe o IP da TV e autorize o controle na televisão.
+- **iPhone pelo Windows:** a pasta [iphone-tv-control](iphone-tv-control/) contém uma página que abre no Safari. O Windows faz a ponte com a TV e precisa ficar ligado durante o uso. Essa alternativa foi testada em um iPhone: Início, volume e Spotify funcionaram.
+- **App nativo para iPhone:** há um projeto SwiftUI em [ControleQ80AiOS](ControleQ80AiOS/). Ele ainda não foi compilado nem testado em um iPhone. Para instalar essa versão, é preciso um Mac com Xcode e assinatura Apple. Os [requisitos do Xcode](https://developer.apple.com/xcode/system-requirements/) são mantidos pela Apple.
 
 ## Android
 
-Abra `ControleQ80A/` no Android Studio com Android SDK 35 e JDK 17 ou 21. Execute `gradlew.bat :app:assembleDebug :app:testDebugUnitTest` no Windows, ou `./gradlew :app:assembleDebug :app:testDebugUnitTest` em outro sistema. O APK fica em `ControleQ80A/app/build/outputs/apk/debug/` apenas após um build bem-sucedido. A chave de assinatura debug é local e não é publicada.
+Abra a pasta `ControleQ80A` no Android Studio. O projeto usa o Android SDK 35 e JDK 17 ou 21. Para compilar o APK e executar os testes no Windows, abra um terminal nessa pasta e rode:
 
-No app, informe o IP da TV e aceite o pedido de autorização na televisão. IP e token persistem localmente. O controle tenta reconectar após uma queda e ao voltar do segundo plano; o ícone circular força uma tentativa imediata. Um comando tocado durante a desconexão deve ser repetido após aparecer **Conectado à TV**. O slider de volume é relativo e não mostra o nível real da TV.
+```powershell
+.\gradlew.bat :app:assembleDebug :app:testDebugUnitTest
+```
+
+Depois de um build bem-sucedido, o APK estará em `ControleQ80A/app/build/outputs/apk/debug/app-debug.apk`. Instale-o no celular, abra as configurações do controle e informe o IP da TV. Na primeira conexão, aceite o pedido que aparecer na televisão.
+
+O IP e o token de pareamento ficam guardados no aparelho. O app tenta reconectar quando a conexão cai e quando você volta à tela; o botão de seta circular permite tentar novamente na hora. Se tocar em um comando enquanto ele ainda estiver reconectando, espere a mensagem **Conectado à TV** e toque de novo. A reconexão após um período longo sem uso ainda precisa ser testada na TV.
+
+O controle de volume é relativo: arraste para um lado ou para o outro para enviar comandos de aumentar ou diminuir. A posição central não representa o volume atual da TV.
+
+## iPhone usando um Windows
+
+Essa opção usa o Safari como controle e uma pequena ponte no Windows para se comunicar com a TV. Deixe o iPhone, o Windows e a televisão na mesma rede e mantenha o computador ligado.
+
+### Prepare o Windows
+
+Você vai precisar de Python 3, PowerShell 7 e do pacote Python `cryptography`. Depois de instalar Python e PowerShell, abra um terminal na pasta do projeto e instale o pacote:
+
+```powershell
+python -m pip install cryptography
+```
+
+Com a TV ligada, inicie o pareamento:
+
+```powershell
+pwsh -NoProfile -File .\tv-lan-probe\probe.ps1
+```
+
+O programa pede o IP da TV. Aceite o pedido de controle na tela da televisão. O Windows guarda o token protegido para a conta atual e registra a impressão digital do certificado da TV.
+
+Se você já usa o app Android **debug** pareado e não consegue aceitar outro pedido na TV, existe uma alternativa: conecte esse Android por ADB, com a depuração autorizada, e execute o importador abaixo. Ele pede o IP que está salvo no app Android e transfere o token para o Windows sem exibi-lo no terminal. Em seguida, execute `probe.ps1` novamente para conectar e registrar o certificado da TV. Desative a depuração no Android quando terminar.
+
+```powershell
+pwsh -NoProfile -File .\tv-lan-probe\import-android-token.ps1
+```
+
+### Abra o controle no iPhone
+
+Execute `iphone-tv-control/iniciar-controle-iphone.cmd` no Windows para iniciar o servidor HTTPS. O programa pede as informações da rede, mostra um endereço para abrir no Safari e gera um PIN temporário. Digite esse PIN na página. Depois de conectado, use **Compartilhar → Adicionar à Tela de Início** se quiser abrir o controle por um ícone.
+
+O HTTPS usa um certificado local autoassinado. Confira a impressão digital exibida no terminal antes de confiar nele. No Safari usado durante os testes, essa conexão apresentou instabilidade. A alternativa testada foi `iphone-tv-control/iniciar-teste-iphone.cmd`, que inicia uma sessão HTTP temporária.
+
+**No modo HTTP, a comunicação entre o iPhone e o Windows não é criptografada.** Use-o apenas em uma rede privada e confiável, sem encaminhar a porta no roteador, e feche o servidor quando terminar. Nesse modo, a sessão expira em uma hora e é perdida ao reiniciar o servidor. O token da TV permanece no Windows.
+
+### O que preencher
+
+Os dados da sua rede não vêm preenchidos. O iniciador pede os valores abaixo:
+
+| Campo | Onde encontrar ou como usar |
+| --- | --- |
+| IP da TV | Nas configurações de rede da televisão. Use o endereço atual da TV no app ou quando o programa pedir. |
+| IPv4 do Windows | Nas informações da conexão Wi-Fi do Windows. É o endereço do computador que vai servir a página para o iPhone. |
+| Sub-rede permitida | A faixa da rede local em formato CIDR. Ela deve incluir o Windows e o iPhone; o servidor recusa conexões de fora dela. |
+| Porta | O iniciador usa a porta 8765. Quem iniciar `server.py` diretamente pode alterá-la com `--port`. |
+| PIN | Aparece no terminal quando o servidor inicia. É temporário e deve ser digitado no Safari. |
+| IDs dos aplicativos | Podem ser alterados nas configurações do controle. A consulta à lista instalada depende da resposta da TV. |
+
+O token Samsung é fornecido pela TV durante o pareamento, não precisa ser digitado no navegador e não deve ser compartilhado. Arquivos de pareamento, sessão, certificados e chaves ficam em pastas `.local`, ignoradas pelo Git.
 
 ## App nativo para iPhone
 
-Quem tiver Mac deve abrir `ControleQ80AiOS/ControleQ80AiOS.xcodeproj` no Xcode, selecionar a própria equipe de assinatura e informar o IP da TV em Configurações. O iPhone precisa autorizar acesso à rede local e a TV precisa autorizar o pareamento. Não há descoberta multicast no código iOS; essa capacidade depende de [entitlement restrito pela Apple](https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.networking.multicast). A compilação, o pareamento e os comandos dessa versão ainda exigem validação em Mac, iPhone e TV reais.
+Em um Mac, abra `ControleQ80AiOS/ControleQ80AiOS.xcodeproj` no Xcode. Selecione sua equipe em **Signing & Capabilities**, ajuste o identificador do app se necessário e escolha o iPhone como destino. No aplicativo, informe o IP da TV e aceite os pedidos de acesso à rede e de autorização na televisão.
 
-## Controle web no iPhone via Windows
+Essa versão ainda precisa ser compilada e validada em um Mac, um iPhone e uma TV. O projeto usa IP informado manualmente; descoberta multicast no iOS depende de uma [permissão específica da Apple](https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.networking.multicast).
 
-Instale Python 3 com o pacote `cryptography` e PowerShell 7 no Windows. Primeiro, use `tv-lan-probe/probe.ps1` para autorizar a ponte com a TV. Se a TV já estiver autorizada pelo app Android debug e não houver como aceitar um novo pedido na tela, `tv-lan-probe/import-android-token.ps1` permite transferir o token por ADB de um único Android autorizado para a DPAPI da conta Windows, sem salvar texto puro. Depois, use `probe.ps1` para fixar o certificado da TV. Desative a depuração Android após a transferência.
+## Limitações conhecidas
 
-Execute `iphone-tv-control/iniciar-controle-iphone.cmd` para HTTPS ou `iphone-tv-control/iniciar-teste-iphone.cmd` para a prova HTTP local. O iniciador pergunta o IPv4 do Windows, a sub-rede permitida e o IPv4 da TV, sem valores de exemplo. Abra no Safari o endereço mostrado no terminal e digite o PIN temporário exibido ali. Após confirmar o controle, use **Compartilhar → Adicionar à Tela de Início**.
+- A lista de aplicativos pode não ser retornada pela TV. Nesse caso, preencha os IDs manualmente.
+- O envio de texto depende do firmware e do campo selecionado na TV. As setas e o OK continuam disponíveis para usar o teclado da televisão.
+- O botão de energia não garante ligar a TV em standby profundo. Wake-on-LAN não está implementado.
+- A Alexa da TV não está integrada ao controle.
+- No Android, a conexão tenta WSS na porta 8002. Em uma falha apropriada de conexão, pode recorrer a WS na porta 8001, que transmite o token sem TLS na rede local. A ponte Windows e o projeto iOS usam WSS.
 
-O teste HTTP foi o caminho validado no iPhone do usuário, mas o tráfego iPhone→Windows **não é criptografado**. Uma pessoa capaz de observar essa rede pode capturar a sessão e comandar a TV. Use apenas em rede doméstica privada e confiável, não encaminhe a porta no roteador e encerre o servidor quando terminar. O HTTPS local usa certificado autoassinado; a confiança inicial precisa ser conferida no iPhone e não foi estável no Safari testado. O token da TV permanece fora do navegador em ambas as modalidades. Os arquivos em `.local/` contêm material de pareamento e são ignorados pelo Git.
-
-## Limites do protocolo
-
-- A TV pode não responder à consulta de apps; os IDs continuam editáveis.
-- O envio de texto depende do campo selecionado e do firmware da TV.
-- `KEY_POWER` não garante ligar a TV em standby profundo. Wake-on-LAN não foi implementado sem confirmação de suporte e configuração de endereço MAC e broadcast pelo usuário.
-- A Alexa da TV não foi integrada. Não há protocolo local documentado neste canal de controle para enviar comandos à Alexa; o uso da assistente pela TV segue a configuração própria da Samsung/Amazon e pode exigir conta e serviços externos.
-- O Android usa WSS na porta 8002 e só tenta WS na porta 8001 em falha apropriada de conexão da porta segura. Esse fallback transmite token sem TLS na rede local. A ponte Windows e o código iOS usam apenas WSS.
-
-Este repositório contém apenas código fonte e documentação pública. Arquivos de sessão, tokens, certificados, chaves de assinatura, dados do telefone do autor, relatórios e configurações da rede doméstica não fazem parte dele.
+O comportamento pode variar conforme o modelo, a região e o firmware. Na TV usada no desenvolvimento, os controles básicos do Android e o atalho Spotify foram confirmados; teste os demais recursos na sua televisão.
