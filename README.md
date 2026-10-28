@@ -1,6 +1,6 @@
 # Controle TV Q80A sem anúncios
 
-Controle local para uma Samsung QN55Q80AAGXZD (Tizen), feito como projeto pessoal. Não tem vínculo com a Univesp. Não há anúncios, analytics, conta, backend em nuvem ou serviço pago. O telefone, a TV e, na alternativa web, o Windows precisam estar na mesma rede local.
+Controle local para uma Samsung QN55Q80AAGXZD (Tizen), feito como projeto pessoal. Não há anúncios, analytics, conta, backend em nuvem ou serviço pago. O telefone, a TV e, na alternativa web, o Windows precisam estar na mesma rede local.
 
 ## O que há neste repositório
 
