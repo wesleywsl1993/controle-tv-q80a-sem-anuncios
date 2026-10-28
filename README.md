@@ -24,6 +24,8 @@ O IP e o token de pareamento ficam guardados no aparelho. O app tenta reconectar
 
 O controle de volume é relativo: arraste para um lado ou para o outro para enviar comandos de aumentar ou diminuir. A posição central não representa o volume atual da TV.
 
+Para tentar ligar a TV quando ela estiver em espera, preencha o MAC da TV e o broadcast da rede em Configurações e toque em **Ligar TV pela rede**. O app envia um pacote Wake-on-LAN pela interface de rede conectada. A opção **Ligar com celular**, quando disponível, precisa estar ativada na TV. O envio não confirma que ela ligou: o resultado depende da TV, do tipo de espera e da rede.
+
 ## iPhone usando um Windows
 
 Essa opção usa o Safari como controle e uma pequena ponte no Windows para se comunicar com a TV. Deixe o iPhone, o Windows e a televisão na mesma rede e mantenha o computador ligado.
@@ -54,6 +56,16 @@ pwsh -NoProfile -File .\tv-lan-probe\import-android-token.ps1
 
 Execute `iphone-tv-control/iniciar-controle-iphone.cmd` no Windows para iniciar o servidor HTTPS. O programa pede as informações da rede, mostra um endereço para abrir no Safari e gera um PIN temporário. Digite esse PIN na página. Depois de conectado, use **Compartilhar → Adicionar à Tela de Início** se quiser abrir o controle por um ícone.
 
+Para iniciar o controle automaticamente ao entrar na conta do Windows e reiniciar o servidor se ele parar, execute:
+
+```powershell
+pwsh -NoProfile -File .\iphone-tv-control\instalar-inicializacao.ps1
+```
+
+O instalador pede os endereços da rede e cria um atalho na pasta de inicialização da conta atual. Para consultar o PIN temporário gerado pelo serviço, abra `iphone-tv-control/mostrar-pin.cmd` no Windows; se o PIN anterior tiver expirado ou já tiver sido usado, o programa pede outro ao serviço. A sessão HTTPS fica salva e é renovada ao usar o controle. O computador precisa estar ligado, com a sessão Windows iniciada e sem suspensão. Reserve o IP do Windows no roteador para que o endereço salvo no iPhone continue apontando para ele.
+
+Na página, **Ligar TV pela rede** envia Wake-on-LAN. Na primeira vez, abra a configuração desse botão e informe o MAC da TV e o broadcast da rede. Na QN55Q80AAGXZD usada no projeto, a TV ligou após aproximadamente 30 segundos em espera, com **Ligar com celular** ativado. A confirmação de envio indica apenas que o pacote saiu do Windows; o resultado pode variar conforme o tempo em espera e a rede.
+
 O HTTPS usa um certificado local autoassinado. Confira a impressão digital exibida no terminal antes de confiar nele. No Safari usado durante os testes, essa conexão apresentou instabilidade. A alternativa testada foi `iphone-tv-control/iniciar-teste-iphone.cmd`, que inicia uma sessão HTTP temporária.
 
 **No modo HTTP, a comunicação entre o iPhone e o Windows não é criptografada.** Use-o apenas em uma rede privada e confiável, sem encaminhar a porta no roteador, e feche o servidor quando terminar. Nesse modo, a sessão expira em uma hora e é perdida ao reiniciar o servidor. O token da TV permanece no Windows.
@@ -83,8 +95,8 @@ Essa versão ainda precisa ser compilada e validada em um Mac, um iPhone e uma T
 
 - A lista de aplicativos pode não ser retornada pela TV. Nesse caso, preencha os IDs manualmente.
 - O envio de texto depende do firmware e do campo selecionado na TV. As setas e o OK continuam disponíveis para usar o teclado da televisão.
-- O botão de energia não garante ligar a TV em standby profundo. Wake-on-LAN não está implementado.
-- A Alexa da TV não está integrada ao controle.
+- O botão de energia não garante ligar a TV em standby profundo. O Wake-on-LAN depende da TV e da rede e precisa ser confirmado no aparelho.
+- A Alexa da TV não está integrada ao controle local. A Q80A informa suporte à Alexa integrada e a comando de voz à distância: configure-a em **Configurações → Geral → Voz → Assistente de voz**, entre na conta Amazon e confira se o microfone da TV está ativado. Na TV usada no projeto, a Alexa respondeu e alterou o volume por voz sem controle físico. Outra opção é vincular a TV ao SmartThings e habilitar a skill SmartThings no app Alexa. Essas opções usam serviços externos e contas; os recursos básicos do SmartThings não exigem mensalidade. A disponibilidade de comandos varia por modelo e região. Consulte as orientações da [Samsung sobre Alexa](https://news.samsung.com/br/aprenda-o-passo-a-passo-para-usar-alexa-na-smart-tv-samsung) e sobre [comando de voz na TV](https://www.samsung.com/br/support/tv-audio-video/o-comando-de-voz-da-minha-smart-tv-samsung-nao-funciona/).
 - No Android, a conexão tenta WSS na porta 8002. Em uma falha apropriada de conexão, pode recorrer a WS na porta 8001, que transmite o token sem TLS na rede local. A ponte Windows e o projeto iOS usam WSS.
 
 O comportamento pode variar conforme o modelo, a região e o firmware. Na TV usada no desenvolvimento, os controles básicos do Android e o atalho Spotify foram confirmados; teste os demais recursos na sua televisão.

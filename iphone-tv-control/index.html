@@ -16,6 +16,11 @@
       <div><div class="eyebrow">SAMSUNG Q80A · CONTROLE LOCAL</div><h1>Controle da TV</h1></div>
       <div id="status" class="status" role="status" aria-live="polite">Verificando…</div>
     </header>
+    <section id="connection-help" class="login" role="status">
+      <h2>Conectando ao Windows</h2>
+      <p id="connection-message">Aguarde enquanto o controle verifica a conexão.</p>
+      <button id="retry-connection" class="primary" type="button">Tentar novamente</button>
+    </section>
     <section id="login" class="login" hidden>
       <h2>Conectar este iPhone</h2>
       <p>Digite o PIN exibido no terminal do Windows. O token da TV permanece no computador.</p>
@@ -45,6 +50,19 @@
         </div>
         <button class="secondary" type="button" data-key="KEY_RETURN">Voltar</button>
         <button class="secondary" type="button" data-key="KEY_MUTE">Mudo</button>
+      </section>
+      <section class="controls" aria-label="Ligar TV pela rede">
+        <div class="section-title"><h2>Ligar TV pela rede</h2></div>
+        <button id="wake-tv" type="button">Enviar sinal para ligar</button>
+        <details class="settings">
+          <summary>Configurar Wake-on-LAN</summary>
+          <p>Informe o MAC da TV e o broadcast da sua rede. A TV precisa permitir ligar pelo celular.</p>
+          <form id="wake-form">
+            <label for="wake-mac">MAC da TV</label><input id="wake-mac" maxlength="17" autocomplete="off" required>
+            <label for="wake-broadcast">Broadcast da rede</label><input id="wake-broadcast" inputmode="decimal" autocomplete="off" required>
+            <button type="submit">Salvar configuração</button>
+          </form>
+        </details>
       </section>
       <section class="controls" aria-label="Volume e canal">
         <div class="section-title"><h2>Volume</h2><span>ajuste relativo</span></div>

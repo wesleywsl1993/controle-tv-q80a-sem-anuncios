@@ -7,6 +7,15 @@ import java.util.Base64
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 class TvProtocolTest {
+    @Test fun wakePacketContainsTheMacAndRejectsInvalidAddresses() {
+        val packet = WakeOnLan.packet("02:11:22:33:44:55")
+        assertEquals(102, packet.size)
+        assertTrue(packet.take(6).all { it == 0xff.toByte() })
+        assertArrayEquals(byteArrayOf(2, 17, 34, 51, 68, 85), packet.copyOfRange(6, 12))
+        assertArrayEquals(packet.copyOfRange(6, 12), packet.copyOfRange(96, 102))
+        assertThrows(IllegalArgumentException::class.java) { WakeOnLan.packet("01:11:22:33:44:55") }
+        assertThrows(IllegalArgumentException::class.java) { WakeOnLan.packet("invalid") }
+    }
     @Test fun acceptsOnlyPrivateLiteralIpv4() {
         listOf("10.0.0.8", "172.16.1.2", "172.31.255.254", "192.168.1.50").forEach {
             assertTrue(it, TvProtocol.validIp(it))

@@ -37,6 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 private val Bg = Color(0xFF080B12)
@@ -66,6 +69,9 @@ private fun RemoteScreen(prefs: android.content.SharedPreferences, lifecycle: Li
     var spotifyId by remember { mutableStateOf(prefs.getString("spotify_id", "") ?: "") }
     var youtubeId by remember { mutableStateOf(prefs.getString("youtube_id", "") ?: "") }
     var netflixId by remember { mutableStateOf(prefs.getString("netflix_id", "") ?: "") }
+    var wakeMac by remember { mutableStateOf(prefs.getString("wake_mac", "") ?: "") }
+    var wakeBroadcast by remember { mutableStateOf(prefs.getString("wake_broadcast", "") ?: "") }
+    val scope = rememberCoroutineScope()
     var showSettings by remember { mutableStateOf(tvIp.isBlank()) }
     var showKeyboard by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
@@ -125,6 +131,20 @@ private fun RemoteScreen(prefs: android.content.SharedPreferences, lifecycle: Li
                 ActionTile("Início", Icons.Default.Home, Modifier.weight(1f)) { client.sendKey("KEY_HOME") }
                 ActionTile("Teclado", Icons.Default.Keyboard, Modifier.weight(1f)) { showKeyboard = true }
             }
+            TextButton(onClick = {
+                if (wakeMac.isBlank() || wakeBroadcast.isBlank()) {
+                    status = "Configure o MAC da TV e o broadcast nas configurações."
+                    showSettings = true
+                } else {
+                    val mac = wakeMac
+                    val broadcast = wakeBroadcast
+                    scope.launch {
+                        val result = withContext(Dispatchers.IO) { runCatching { WakeOnLan.send(mac, broadcast) } }
+                        status = if (result.isSuccess) "Sinal enviado. Confira se a TV ligou."
+                        else "Não foi possível enviar o sinal. Confira o MAC e o broadcast da rede Wi-Fi."
+                    }
+                }
+            }) { Text("Ligar TV pela rede") }
 
             // Direction pad
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -192,6 +212,8 @@ private fun RemoteScreen(prefs: android.content.SharedPreferences, lifecycle: Li
         var draftSpotify by remember(spotifyId) { mutableStateOf(spotifyId) }
         var draftYoutube by remember(youtubeId) { mutableStateOf(youtubeId) }
         var draftNetflix by remember(netflixId) { mutableStateOf(netflixId) }
+        var draftWakeMac by remember(wakeMac) { mutableStateOf(wakeMac) }
+        var draftWakeBroadcast by remember(wakeBroadcast) { mutableStateOf(wakeBroadcast) }
         fun saveDraft(): Boolean {
             val nextIp = draftIp.trim()
             if (!TvProtocol.validIp(nextIp)) {
@@ -204,6 +226,13 @@ private fun RemoteScreen(prefs: android.content.SharedPreferences, lifecycle: Li
                 status = "Confira os IDs dos aplicativos."
                 return false
             }
+            val nextWakeMac = draftWakeMac.trim()
+            val nextWakeBroadcast = draftWakeBroadcast.trim()
+            if ((nextWakeMac.isNotEmpty() || nextWakeBroadcast.isNotEmpty()) &&
+                (runCatching { WakeOnLan.packet(nextWakeMac) }.isFailure || !TvProtocol.validIp(nextWakeBroadcast))) {
+                status = "Confira o MAC da TV e o broadcast da rede."
+                return false
+            }
             val nextSpotify = draftSpotify.trim()
             val nextYoutube = draftYoutube.trim()
             val nextNetflix = draftNetflix.trim()
@@ -213,6 +242,8 @@ private fun RemoteScreen(prefs: android.content.SharedPreferences, lifecycle: Li
                 .putString("spotify_id", nextSpotify)
                 .putString("youtube_id", nextYoutube)
                 .putString("netflix_id", nextNetflix)
+                .putString("wake_mac", nextWakeMac)
+                .putString("wake_broadcast", nextWakeBroadcast)
             if (ipChanged) edit.remove("token")
             if (!edit.commit()) {
                 status = "Não foi possível salvar as configurações locais."
@@ -222,6 +253,8 @@ private fun RemoteScreen(prefs: android.content.SharedPreferences, lifecycle: Li
             spotifyId = nextSpotify
             youtubeId = nextYoutube
             netflixId = nextNetflix
+            wakeMac = nextWakeMac
+            wakeBroadcast = nextWakeBroadcast
             if (ipChanged) {
                 token = ""
                 installedApps = emptyList()
@@ -260,6 +293,9 @@ private fun RemoteScreen(prefs: android.content.SharedPreferences, lifecycle: Li
                     OutlinedTextField(draftSpotify, { draftSpotify = it }, label = { Text("ID Spotify") }, singleLine = true)
                     OutlinedTextField(draftYoutube, { draftYoutube = it }, label = { Text("ID YouTube") }, singleLine = true)
                     OutlinedTextField(draftNetflix, { draftNetflix = it }, label = { Text("ID Netflix") }, singleLine = true)
+                    Text("Ligar pela rede (Wake-on-LAN): configure os dois campos para tentar ligar a TV em espera.", fontSize = 12.sp, color = Muted)
+                    OutlinedTextField(draftWakeMac, { draftWakeMac = it }, label = { Text("MAC da TV") }, singleLine = true)
+                    OutlinedTextField(draftWakeBroadcast, { draftWakeBroadcast = it }, label = { Text("Broadcast da rede") }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri))
                     TextButton(onClick = {
                         draftSpotify = "201606009684"
                         draftYoutube = "111299001912"

@@ -11,30 +11,60 @@ function status(text, online) {
 }
 function feedback(text) { $('feedback').textContent = text; }
 
+async function timedFetch(path, options, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try { return await fetch(path, {...options, signal:controller.signal}); }
+  finally { clearTimeout(timer); }
+}
+
 async function post(path, value, authenticated = true) {
   const headers = {'Content-Type':'application/json'};
   if (authenticated) headers['X-CSRF-Token'] = csrf;
-  const response = await fetch(path, {method:'POST', headers, body:JSON.stringify(value), credentials:'same-origin', cache:'no-store'});
+  const response = await timedFetch(path, {method:'POST', headers, body:JSON.stringify(value), credentials:'same-origin', cache:'no-store'}, 35000);
   const result = await response.json();
+  if (authenticated && response.status === 403 && result.error === 'Sessão inválida') refresh();
   if (!response.ok || result.ok === false) throw new Error(result.error || result.message || 'Falha no comando');
   return result;
 }
 
 async function refresh() {
   try {
-    const response = await fetch('/api/status', {credentials:'same-origin', cache:'no-store'});
+    const response = await timedFetch('/api/status', {credentials:'same-origin', cache:'no-store'}, 8000);
     if (response.status === 401) {
-      $('login').hidden = false; $('remote').hidden = true; status('Parear iPhone', false); return;
+      $('connection-help').hidden = true; $('login').hidden = false; $('remote').hidden = true; status('Parear iPhone', false); return;
     }
+    if (!response.ok) throw new Error('Falha ao consultar o Windows');
     const result = await response.json();
     csrf = result.csrf;
-    $('login').hidden = true; $('remote').hidden = false;
+    $('connection-help').hidden = true; $('login').hidden = true; $('remote').hidden = false;
     status(result.connected ? 'TV conectada' : 'TV indisponível', result.connected);
     if (!$('apps-form').contains(document.activeElement)) {
       for (const [name,id] of Object.entries(result.apps)) $(name).value = id;
     }
-  } catch (_) { status('Windows offline', false); feedback('Sem resposta do Windows. Confira a rede local.'); }
+    if (result.wake && !$('wake-form').contains(document.activeElement)) {
+      $('wake-mac').value = result.wake.mac;
+      $('wake-broadcast').value = result.wake.broadcast;
+    }
+  } catch (_) {
+    status('Windows offline', false);
+    $('connection-help').hidden = false;
+    $('connection-message').textContent = 'Sem resposta do Windows. Confira se o servidor está aberto e se o endereço do computador mudou.';
+    feedback('Sem resposta do Windows. Confira a rede local.');
+  }
 }
+$('retry-connection').addEventListener('click', refresh);
+$('wake-tv').addEventListener('click', async () => {
+  try { const result = await post('/api/wake', {}); feedback(result.message); }
+  catch (error) { feedback(error.message); }
+});
+$('wake-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  try {
+    await post('/api/wake-settings', {mac:$('wake-mac').value.trim(), broadcast:$('wake-broadcast').value.trim()});
+    feedback('Configuração para ligar a TV salva no Windows.');
+  } catch (error) { feedback(error.message); }
+});
 
 function command(value, message = 'Comando enviado') {
   commandQueue = commandQueue.catch(() => {}).then(async () => {
